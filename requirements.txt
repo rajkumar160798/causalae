@@ -1,0 +1,26 @@
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+
+# PyTorch (choose your version based on GPU/CPU)
+torch>=2.0.0
+torchvision
+
+# SHAP for explainability
+shap>=0.42.0
+
+# Streamlit for HITL dashboard
+streamlit
+
+# Additional libraries for data processing and visualization
+scipy
+nltk
+spacy
+transformers
+sentence-transformers
+tqdm
+jupyter
+ipykernel
+plotly
