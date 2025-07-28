@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import os
 
 def plot_shap_for_latent(latent_id, shap_dir="outputs/shap", top_k=10):
-    filepath = os.path.join(shap_dir, f"latent_{latent_id}_shap.csv")
+    filepath = os.path.join(shap_dir, f"latent_{latent_id}_shap_ai4i.csv")
     df = pd.read_csv(filepath)
     df_top = df.sort_values("SHAP_Importance", ascending=False).head(top_k)
 
@@ -14,7 +14,7 @@ def plot_shap_for_latent(latent_id, shap_dir="outputs/shap", top_k=10):
     plt.gca().invert_yaxis()
     plt.tight_layout()
 
-    output_path = os.path.join(shap_dir, f"latent_{latent_id}_shap_plot.png")
+    output_path = os.path.join(shap_dir, f"latent_{latent_id}_shap_ai4i_plot.png")
     plt.savefig(output_path)
     print(f"📊 Saved: {output_path}")
 
