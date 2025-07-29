@@ -8,6 +8,11 @@ from src.train_autoencoder import train_autoencoder
 from src.train_autoencoder_ai4i import train_autoencoder_ai4i
 from src.shap_explainer import explain_latents
 from src.shap_visualizer import generate_all_shap_plots
+from causal_analysis import (
+    compute_granger_causality,
+    compute_dowhy_effects,
+    counterfactual_latent_shift,
+)
 
 
 def main():
@@ -34,12 +39,19 @@ def main():
         shap_prefix = "ai4i"
 
     print("\n🧠 Training Autoencoder...")
-    train_autoencoder(
-        data_path=data_path,
-        model_path=model_path,
-        latent_dim=args.latent_dim,
-        latent_save_path=latents_path
-    )
+    if args.dataset == "ess":
+        train_autoencoder(
+            file_path=data_path,
+            latent_dim=args.latent_dim,
+            num_epochs=5,
+        )
+    else:
+        train_autoencoder_ai4i(
+            file_path=data_path,
+            model_save_path=model_path,
+            latent_dim=args.latent_dim,
+            num_epochs=5,
+        )
 
     print("\n🔍 Running SHAP Explainability...")
     explain_latents(
@@ -52,6 +64,28 @@ def main():
 
     print("\n📊 Generating SHAP Visualizations...")
     generate_all_shap_plots(shap_prefix=shap_prefix)
+
+    if args.dataset == "ess":
+        granger_df = compute_granger_causality(
+            data_path=data_path,
+            latents_path="outputs/latents/ess_latents.csv",
+        )
+        # summary: best feature per latent
+        summary = granger_df.sort_values("p_value").groupby("latent").first()
+    else:
+        effects_df = compute_dowhy_effects(
+            data_path=data_path,
+            latents_path="outputs/latents/ai4i_latents.csv",
+        )
+        counterfactual_latent_shift(
+            data_path=data_path,
+            model_path=model_path,
+            latent_dim=args.latent_dim,
+        )
+        summary = effects_df.reindex(effects_df.groupby("latent")['effect'].apply(lambda x: x.abs().idxmax()))
+
+    print("\n📋 Top causal feature per latent:")
+    print(summary[["feature"]])
 
     print("\n✅ Pipeline completed for dataset:", args.dataset)
 
