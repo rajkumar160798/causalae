@@ -70,12 +70,28 @@ def compute_dowhy_effects(data_path="data/processed/ai4i_processed.csv",
                     graph=graph
                 )
                 identified = model.identify_effect()
-                estimate = model.estimate_effect(identified, method_name="backdoor.linear_regression")
+                estimate = model.estimate_effect(
+                    identified, method_name="backdoor.linear_regression"
+                )
                 effect_val = estimate.value
+                try:
+                    ci = estimate.get_confidence_intervals()
+                    ci_lower, ci_upper = ci[0][0], ci[0][1]
+                except Exception:
+                    ci_lower, ci_upper = np.nan, np.nan
             except Exception as e:
                 print(f"⚠️ DoWhy failed for {feature}->{outcome}: {e}")
                 effect_val = np.nan
-            effects.append({"feature": feature, "latent": outcome, "effect": effect_val})
+                ci_lower, ci_upper = np.nan, np.nan
+            effects.append(
+                {
+                    "feature": feature,
+                    "latent": outcome,
+                    "effect": effect_val,
+                    "ci_lower": ci_lower,
+                    "ci_upper": ci_upper,
+                }
+            )
     eff_df = pd.DataFrame(effects)
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     eff_df.to_csv(output_path, index=False)
@@ -118,7 +134,82 @@ def counterfactual_latent_shift(data_path="data/processed/ai4i_processed.csv",
     print(f"✅ Counterfactual latent shifts saved to {output_path}")
     return shift_df
 
+
+def run_causal_discovery(
+    data_path="data/processed/ai4i_processed.csv",
+    method="pc",
+    output_dir="outputs/discovery",
+):
+    """Run causal discovery on a dataset using PC, FCI, or NOTEARS."""
+    print(f"\n📈 Running causal discovery ({method})...")
+    df = pd.read_csv(data_path)
+    if "Timestamp" in df.columns:
+        df = df.drop(columns=["Timestamp"])
+    data = df.values
+    features = df.columns.tolist()
+    os.makedirs(output_dir, exist_ok=True)
+
+    try:
+        if method.lower() == "pc":
+            from causallearn.search.ConstraintBased.PC import pc
+            from causallearn.utils.cit import fisherz
+
+            cg = pc(data, indep_test=fisherz)
+            adj = (cg.G.graph != 0).astype(int)
+        elif method.lower() == "fci":
+            from causallearn.search.ConstraintBased.FCI import fci
+            from causallearn.utils.cit import fisherz
+
+            cg = fci(data, indep_test=fisherz)
+            adj = (cg.G.graph != 0).astype(int)
+        elif method.lower() == "notears":
+            from causalnex.structure.notears import from_pandas
+
+            sm = from_pandas(df)
+            import networkx as nx
+
+            adj = nx.to_numpy_array(sm, nodelist=features)
+        else:
+            raise ValueError("method must be pc, fci, or notears")
+    except Exception as e:
+        print(f"⚠️ Causal discovery failed: {e}")
+        return None
+
+    import networkx as nx
+    import matplotlib.pyplot as plt
+    G = nx.DiGraph()
+    G.add_nodes_from(features)
+    for i, src in enumerate(features):
+        for j, tgt in enumerate(features):
+            if adj[i, j] != 0:
+                G.add_edge(src, tgt)
+
+    adj_df = pd.DataFrame(adj, index=features, columns=features)
+    adj_path = os.path.join(output_dir, f"adjacency_{method}.csv")
+    adj_df.to_csv(adj_path)
+
+    try:
+        from networkx.drawing.nx_pydot import write_dot
+
+        write_dot(G, os.path.join(output_dir, f"graph_{method}.dot"))
+    except Exception as e:
+        print(f"[WARN] Failed to write DOT file: {e}")
+
+    try:
+        plt.figure(figsize=(8, 6))
+        pos = nx.spring_layout(G, seed=42)
+        nx.draw(G, pos, with_labels=True, node_color="lightblue", edge_color="gray", node_size=500, arrows=True)
+        plt.tight_layout()
+        plt.savefig(os.path.join(output_dir, f"graph_{method}.png"))
+        plt.close()
+    except Exception as e:
+        print(f"[WARN] Failed to save PNG: {e}")
+
+    print(f"✅ Discovery outputs saved to {output_dir}")
+    return G, adj_df
+
 if __name__ == "__main__":
     compute_granger_causality()
     compute_dowhy_effects()
     counterfactual_latent_shift()
+    run_causal_discovery()
