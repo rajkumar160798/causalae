@@ -1,7 +1,7 @@
 feature,SHAP_Importance
-Tool wear [min],0.36317172682829874
-Torque [Nm],0.2916565667709066
-Rotational speed [rpm],0.1390762276012279
-Process temperature [K],0.11790531477293092
-Air temperature [K],0.09651795772660307
-UDI,0.04560788372335247
+Torque [Nm],0.5587277334567705
+Rotational speed [rpm],0.3561109190348257
+Tool wear [min],0.20591965929273023
+Process temperature [K],0.060329743105835866
+UDI,0.0325669698989826
+Air temperature [K],0.030430894621534605

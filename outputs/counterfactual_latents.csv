@@ -1,0 +1,25 @@
+feature,latent,shift
+UDI,0,-0.566151
+UDI,1,-0.18153799
+UDI,2,0.52035725
+UDI,3,0.6098094
+Air temperature [K],0,-0.10926366
+Air temperature [K],1,-0.5090873
+Air temperature [K],2,0.1471268
+Air temperature [K],3,-0.38394538
+Process temperature [K],0,-0.19148004
+Process temperature [K],1,-0.54912853
+Process temperature [K],2,0.24278677
+Process temperature [K],3,-0.15321353
+Rotational speed [rpm],0,0.2218988
+Rotational speed [rpm],1,0.275356
+Rotational speed [rpm],2,0.5817209
+Rotational speed [rpm],3,-0.6614447
+Torque [Nm],0,-0.13918853
+Torque [Nm],1,0.03979838
+Torque [Nm],2,-0.7013705
+Torque [Nm],3,0.31525227
+Tool wear [min],0,-0.6817361
+Tool wear [min],1,0.4669028
+Tool wear [min],2,-0.3371272
+Tool wear [min],3,-0.45802084
