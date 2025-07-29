@@ -5,11 +5,12 @@ from train_autoencoder_ai4i import Autoencoder
 import os
 
 def explain_latents(
-    data_path="data/processed/ai4i_processed.csv", 
+    data_path="data/processed/ai4i_processed.csv",
     model_path="outputs/models/autoencoder_ai4i.pt",
     latent_dim=5,
     max_samples=1000,
-    hidden_dim=32
+    shap_prefix="ai4i",
+    hidden_dim=32,
 ):
     print("Loading data...")
     df = pd.read_csv(data_path)
@@ -47,11 +48,13 @@ def explain_latents(
         df_sv = pd.DataFrame(sv, columns=feature_names)
         df_sv_mean = df_sv.abs().mean().sort_values(ascending=False)
         df_sv_mean.reset_index().to_csv(
-            f"outputs/shap/latent_{i}_shap_ai4i.csv",
+            f"outputs/shap/latent_{i}_shap_{shap_prefix}.csv",
             index=False,
             header=["feature", "SHAP_Importance"]
         )
-        print(f"Saved SHAP importances for latent {i} → outputs/shap/latent_{i}_shap_ai4i.csv")
+        print(
+            f"Saved SHAP importances for latent {i} → outputs/shap/latent_{i}_shap_{shap_prefix}.csv"
+        )
 
     print("✅ SHAP attribution complete for all latent dimensions.")
 

@@ -24,3 +24,5 @@ tqdm
 jupyter
 ipykernel
 plotly
+statsmodels
+dowhy
