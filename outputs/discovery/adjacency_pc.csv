@@ -1,0 +1,7 @@
+,UDI,Air temperature [K],Process temperature [K],Rotational speed [rpm],Torque [Nm],Tool wear [min]
+UDI,0,1,1,0,0,0
+Air temperature [K],1,0,1,0,0,0
+Process temperature [K],1,1,0,0,0,0
+Rotational speed [rpm],0,0,0,0,1,0
+Torque [Nm],0,0,0,1,0,0
+Tool wear [min],0,0,0,0,0,0

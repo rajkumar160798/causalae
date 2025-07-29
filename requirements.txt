@@ -28,5 +28,5 @@ statsmodels
 dowhy
 networkx
 graphviz
-causallearn
+causal-learn
 causalnex

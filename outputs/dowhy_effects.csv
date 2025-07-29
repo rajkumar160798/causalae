@@ -1,25 +1,25 @@
-feature,latent,effect
-UDI,latent_0,-0.7057359058421709
-Air temperature [K],latent_0,-0.20875115724984897
-Process temperature [K],latent_0,-0.3655290994213367
-Rotational speed [rpm],latent_0,0.295265231654364
-Torque [Nm],latent_0,-0.2951950289802586
-Tool wear [min],latent_0,-0.5730483408288148
-UDI,latent_1,-0.5710621697004962
-Air temperature [K],latent_1,-1.1081664960378173
-Process temperature [K],latent_1,-1.1913133750510845
-Rotational speed [rpm],latent_1,0.29959914510172764
-Torque [Nm],latent_1,-0.31315004716572437
-Tool wear [min],latent_1,0.41973565519303707
-UDI,latent_2,0.5793851260198044
-Air temperature [K],latent_2,0.2639172001044926
-Process temperature [K],latent_2,0.3775974714435467
-Rotational speed [rpm],latent_2,1.1203966080616592
-Torque [Nm],latent_2,-1.114978932505883
-Tool wear [min],latent_2,-0.2016515298826802
-UDI,latent_3,0.4407099077791258
-Air temperature [K],latent_3,-0.4891744295859888
-Process temperature [K],latent_3,-0.3564543674031211
-Rotational speed [rpm],latent_3,-0.8286930191846429
-Torque [Nm],latent_3,0.7530648678743879
-Tool wear [min],latent_3,-0.5145549993274805
+feature,latent,effect,ci_lower,ci_upper
+UDI,latent_0,,,
+Air temperature [K],latent_0,,,
+Process temperature [K],latent_0,,,
+Rotational speed [rpm],latent_0,,,
+Torque [Nm],latent_0,,,
+Tool wear [min],latent_0,,,
+UDI,latent_1,,,
+Air temperature [K],latent_1,,,
+Process temperature [K],latent_1,,,
+Rotational speed [rpm],latent_1,,,
+Torque [Nm],latent_1,,,
+Tool wear [min],latent_1,,,
+UDI,latent_2,,,
+Air temperature [K],latent_2,,,
+Process temperature [K],latent_2,,,
+Rotational speed [rpm],latent_2,,,
+Torque [Nm],latent_2,,,
+Tool wear [min],latent_2,,,
+UDI,latent_3,,,
+Air temperature [K],latent_3,,,
+Process temperature [K],latent_3,,,
+Rotational speed [rpm],latent_3,,,
+Torque [Nm],latent_3,,,
+Tool wear [min],latent_3,,,

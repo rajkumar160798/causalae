@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import torch
+import dowhy
 from statsmodels.tsa.stattools import grangercausalitytests
 from dowhy import CausalModel
 from src.train_autoencoder_ai4i import Autoencoder as AutoencoderAI4I
@@ -61,12 +62,16 @@ def compute_dowhy_effects(data_path="data/processed/ai4i_processed.csv",
                 print(f"[WARN] Skipping: {feature} or {outcome} not in dataframe columns.")
                 continue
             # Use valid DOT graph string with quoted variable names
-            graph = f'digraph {{ "{feature}" -> "{outcome}"; }}'
+            safe_feature = feature.replace('[', '').replace(']', '').replace(' ', '_')
+            safe_outcome = outcome.replace('[', '').replace(']', '').replace(' ', '_')
+            graph = f"""digraph G {{
+                            {safe_feature} -> {safe_outcome};
+                        }}"""
             try:
                 model = CausalModel(
-                    data=df_combined,
-                    treatment=feature,
-                    outcome=outcome,
+                    data=df_combined.rename(columns={feature: safe_feature, outcome: safe_outcome}),
+                    treatment=safe_feature,
+                    outcome=safe_outcome,
                     graph=graph
                 )
                 identified = model.identify_effect()
@@ -101,7 +106,7 @@ def compute_dowhy_effects(data_path="data/processed/ai4i_processed.csv",
 
 def counterfactual_latent_shift(data_path="data/processed/ai4i_processed.csv",
                                model_path="outputs/models/autoencoder_ai4i.pt",
-                               latent_dim=5,
+                               latent_dim=4,
                                output_path="outputs/counterfactual_latents.csv",
                                hidden_dim=32):
     """Simulate counterfactuals by perturbing each feature of the first sample."""

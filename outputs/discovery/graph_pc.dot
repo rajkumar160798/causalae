@@ -1,0 +1,16 @@
+strict digraph  {
+UDI;
+"Air temperature [K]";
+"Process temperature [K]";
+"Rotational speed [rpm]";
+"Torque [Nm]";
+"Tool wear [min]";
+UDI -> "Air temperature [K]";
+UDI -> "Process temperature [K]";
+"Air temperature [K]" -> UDI;
+"Air temperature [K]" -> "Process temperature [K]";
+"Process temperature [K]" -> UDI;
+"Process temperature [K]" -> "Air temperature [K]";
+"Rotational speed [rpm]" -> "Torque [Nm]";
+"Torque [Nm]" -> "Rotational speed [rpm]";
+}
