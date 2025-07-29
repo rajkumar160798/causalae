@@ -56,20 +56,26 @@ def compute_dowhy_effects(data_path="data/processed/ai4i_processed.csv",
     for latent_col in latents.columns:
         outcome = f"latent_{latent_col}" if not latent_col.startswith("latent_") else latent_col
         for feature in df.columns:
-            model = CausalModel(
-                data=df_combined,
-                treatment=feature,
-                outcome=outcome,
-                graph=f"{feature} -> {outcome};"
-            )
-            identified = model.identify_effect()
+            # Check if feature and outcome are in df_combined
+            if feature not in df_combined.columns or outcome not in df_combined.columns:
+                print(f"[WARN] Skipping: {feature} or {outcome} not in dataframe columns.")
+                continue
+            # Use valid DOT graph string with quoted variable names
+            graph = f'digraph {{ "{feature}" -> "{outcome}"; }}'
             try:
+                model = CausalModel(
+                    data=df_combined,
+                    treatment=feature,
+                    outcome=outcome,
+                    graph=graph
+                )
+                identified = model.identify_effect()
                 estimate = model.estimate_effect(identified, method_name="backdoor.linear_regression")
                 effect_val = estimate.value
             except Exception as e:
-                print(f"⚠️ DoWhy failed for {feature}->{latent_col}: {e}")
+                print(f"⚠️ DoWhy failed for {feature}->{outcome}: {e}")
                 effect_val = np.nan
-            effects.append({"feature": feature, "latent": latent_col, "effect": effect_val})
+            effects.append({"feature": feature, "latent": outcome, "effect": effect_val})
     eff_df = pd.DataFrame(effects)
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     eff_df.to_csv(output_path, index=False)
